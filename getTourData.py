@@ -56,6 +56,11 @@ class KomootSocial:
 
     AllTourInformation = []
     tourcount = 0
+        
+    mycursor = mydb.cursor()
+    sql = f"CREATE TABLE IF NOT EXISTS _{self.client_id} (tour_date DATE, tour_distance INT, tour_duration INT, tour_elevation_up INT, tour_elevation_down INT, tour_map_image TEXT, tour_name TEXT, tour_sport TEXT, tour_start_point TEXT, tour_type TEXT)"
+    mycursor.execute(sql)
+    mydb.commit()
     
     for tours in ListOfTours:
 
@@ -74,16 +79,16 @@ class KomootSocial:
 
       #TourInformation = (TourDate, TourDistance, TourDuration, TourElevation_down, TourElevation_up, TourMap_image, TourName, TourSport, TourStart_point, TourType)
       mycursor = mydb.cursor()
-      sql = "INSERT INTO komoot_user_tour_data (userID, tour_date, tour_distance, tour_duration, tour_elevation_up, tour_elevation_down, tour_map_image, tour_name, tour_sport, tour_start_point, tour_type) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
-      val = (userID, TourDate, TourDistance, TourDuration, TourElevation_up, TourElevation_down, TourMap_image, TourName, TourSport, TourStart_point, TourType)
-      #mycursor.execute(sql, val)
-      #mydb.commit()
+      sql = f"INSERT INTO _{self.client_id} (tour_date, tour_distance, tour_duration, tour_elevation_up, tour_elevation_down, tour_map_image, tour_name, tour_sport, tour_start_point, tour_type) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s) "
+      val = (TourDate, TourDistance, TourDuration, TourElevation_up, TourElevation_down, TourMap_image, TourName, TourSport, TourStart_point, TourType)
+      mycursor.execute(sql, val)
+      mydb.commit()
       print(mycursor.rowcount, "record inserted.")
       #AllTourInformation.append(TourInformation)
       tourcount = tourcount + 1
 
     #print(AllTourInformation)
 
-print("Scipt started")
+print("Script started")
 ks = KomootSocial(673338137185, 'DanielMuenstermann18@gmail.com', 'DPrQh5bqv1TPutMU5uCP')
 ks.getTourData()
