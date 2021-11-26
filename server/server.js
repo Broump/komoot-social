@@ -19,8 +19,15 @@ const app = express();
 }
 app.use(bodyParser.json());
 
-app.get("/api", (req, res) => {
-  res.json({ message: "Hello from Server" });
+app.post("/api/auth", async (req, res) => {
+  const { token } = req.body;
+
+  try {
+    await jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+    return res.json({ status: "ok", message: "User is authenticated" });
+  } catch (err) {
+    return res.json({ status: "error", error: "User is not authenticated" });
+  }
 });
 
 app.post("/api/change-password", async (req, res) => {
@@ -54,10 +61,10 @@ app.post("/api/change-password", async (req, res) => {
 });
 
 app.post("/api/login", async (req, res) => {
-  const { username, password } = req.body;
-  const user = await User.findOne({ username }).lean();
+  const { email, password } = req.body;
+  const user = await User.findOne({ email }).lean();
 
-  if (!user) {
+  if (!email) {
     return res.json({ status: "error", error: "Invalid username/password" });
   }
 
@@ -67,11 +74,11 @@ app.post("/api/login", async (req, res) => {
     const token = jwt.sign(
       {
         id: user._id,
-        username: user.username,
+        email: user.email,
       },
       process.env.ACCESS_TOKEN_SECRET
     );
-
+    console.log("User is logged in");
     return res.json({ status: "ok", data: token });
   }
 
@@ -79,10 +86,14 @@ app.post("/api/login", async (req, res) => {
 });
 
 app.post("/api/register", async (req, res) => {
-  const { username, password: PlainTextPassword } = req.body;
+  const { username, email, password: PlainTextPassword } = req.body;
 
   if (!username || typeof username !== "string") {
     return res.json({ status: "error", error: "Invalid Username" });
+  }
+
+  if (!email || typeof email !== "string") {
+    return res.json({ status: "error", error: "Invalid Email" });
   }
 
   if (!PlainTextPassword || typeof PlainTextPassword !== "string") {
@@ -101,13 +112,17 @@ app.post("/api/register", async (req, res) => {
   try {
     const response = await User.create({
       username,
+      email,
       password,
     });
     console.log("User created successfully: ", response);
   } catch (error) {
     if (error == 11000) {
       //duplicate Key
-      return res.json({ status: "error", error: "Username already in use" });
+      return res.json({
+        status: "error",
+        error: "Email already in use",
+      });
     } else {
       throw error;
     }
@@ -116,6 +131,6 @@ app.post("/api/register", async (req, res) => {
   res.json({ status: "ok" });
 });
 
-app.listen(9999, () => {
-  console.log("Server is running on PORT 9999");
+app.listen(3001, () => {
+  console.log("Server is running on PORT 3001");
 });

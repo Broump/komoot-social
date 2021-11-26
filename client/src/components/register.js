@@ -5,13 +5,37 @@ import Button from "react-bootstrap/Button";
 import { FloatingLabel, Col, Row, Container } from "react-bootstrap";
 import { useState } from "react";
 
-function Register() {
-  const [username, setUsername] = useState("");
-  console.log(username);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+import axios from "axios";
 
-  const login = () => {};
+function Register() {
+  const [inputField, setInputField] = useState({
+    username: "",
+    email: "",
+    password: "",
+  });
+
+  const [register, setRegister] = useState("");
+
+  const handleChangeInput = (e) => {
+    const value = e.target.value;
+    setInputField({
+      ...inputField,
+      [e.target.name]: value,
+    });
+  };
+
+  async function RegisterUser() {
+    axios
+      .post("/api/register", {
+        username: inputField.username,
+        email: inputField.email,
+        password: inputField.password,
+      })
+      .then((response) => {
+        console.log(response);
+        setRegister(true);
+      });
+  }
 
   return (
     <Container>
@@ -26,7 +50,9 @@ function Register() {
             <Form.Control
               type="text"
               placeholder="Username"
-              onChange={(e) => this.setUsername(this)}
+              name="username"
+              value={inputField.username}
+              onChange={(e) => handleChangeInput(e)}
             />
           </FloatingLabel>
 
@@ -35,7 +61,13 @@ function Register() {
             label="Email address"
             className="mb-3"
           >
-            <Form.Control type="email" placeholder="name@example.com" />
+            <Form.Control
+              type="email"
+              placeholder="name@example.com"
+              name="email"
+              value={inputField.email}
+              onChange={(e) => handleChangeInput(e)}
+            />
           </FloatingLabel>
 
           <FloatingLabel
@@ -43,9 +75,15 @@ function Register() {
             controlId="floatingPassword"
             label="Password"
           >
-            <Form.Control type="password" placeholder="Password" />
+            <Form.Control
+              type="password"
+              placeholder="Password"
+              name="password"
+              value={inputField.password}
+              onChange={(e) => handleChangeInput(e)}
+            />
           </FloatingLabel>
-          <Button variant="primary" type="submit">
+          <Button variant="primary" type="submit" onClick={RegisterUser}>
             Submit
           </Button>
           <Col />
