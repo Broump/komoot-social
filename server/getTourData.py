@@ -3,6 +3,14 @@ import json
 import mysql.connector
 import math
 import time
+import sys
+import collections
+
+from flask import Flask, jsonify, request
+from flask_cors import CORS
+
+app = Flask(__name__)
+CORS(app, resources={r"/*": {"origins": "*"}})
 
 class KomootSocial:
   #instantiate KommotSocial Class with given client_id, client_email and client_password
@@ -91,30 +99,60 @@ class KomootSocial:
           val = (TourDate, TourDistance, TourDuration, TourElevation_up, TourElevation_down, TourMap_image, TourName, TourSport, TourStart_point, TourType)
           mycursor.execute(sql, val)
           self.mydb.commit()
-          print(mycursor.rowcount, "record inserted.")
+
         except mysql.connector.errors.IntegrityError:
-          print("Up-to-Date")
+          pass
         tourcount = tourcount + 1
          
     except KeyError:
-      print("To many requests")
+      pass
     
   def distancePerYear(self, tour_year):
     mycursor = self.mydb.cursor()
     sql = f"SELECT SUM(tour_distance) FROM _{self.client_id} WHERE (tour_date LIKE '{tour_year}%') AND tour_type = 'tour_recorded'"
     mycursor.execute(sql)
     data = mycursor.fetchall()
-    print(data)
+    return(data)
     
   def toursPerYear(self, tour_year):
     mycursor = self.mydb.cursor()
     sql = f"SELECT COUNT(*) FROM _{self.client_id} WHERE (tour_date LIKE '{tour_year}%') AND tour_type = 'tour_recorded'"
     mycursor.execute(sql)
     data = mycursor.fetchall()
-    print(data)  
+    return(data)  
+    
+  def getAllTours(self):
+    mycursor = self.mydb.cursor()
+    sql = f"SELECT tour_name, tour_sport, tour_distance, tour_duration, tour_date, tour_elevation_up, tour_elevation_down  FROM _{self.client_id} WHERE tour_type = 'tour_recorded'"
+    mycursor.execute(sql)
+    rows = mycursor.fetchall()
+    
+    objects_list = []
+    for row in rows:
+      d = collections.OrderedDict()
+      d['tour_name'] = row[0]
+      d['tour_sport'] = row[1]
+      d['tour_distance'] = row[2]
+      d['tour_duration'] = row[3]
+      d['tour_date'] = row[4]
+      d['tour_elevation_up'] = row[5]
+      d['tour_elevation_down'] = row[6]
+      objects_list.append(d)
+    j = json.dumps(objects_list, indent=4, sort_keys=True, default=str)
+    return j
 
-print("Script started")
-ks = KomootSocial(673338137185, 'DanielMuenstermann18@gmail.com', 'DPrQh5bqv1TPutMU5uCP')
-ks.getTourData()
-ks.distancePerYear(2021)
-ks.toursPerYear(2021)
+
+# ks = KomootSocial(673338137185, 'DanielMuenstermann18@gmail.com', 'DPrQh5bqv1TPutMU5uCP')
+# ks.getTourData()
+# ks.getAllTours()
+functionType = sys.argv[1]
+
+if (functionType == "allTours"):
+  ks = KomootSocial(int(sys.argv[2]), sys.argv[3], sys.argv[4])
+  ks.getTourData()
+  returnData = ks.getAllTours()
+  print(returnData)
+  
+sys.stdout.flush()
+
+

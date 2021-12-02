@@ -4,17 +4,19 @@ import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import { FloatingLabel, Col, Row, Container } from "react-bootstrap";
 import { useState } from "react";
-
+import { useHistory } from "react-router";
 import axios from "axios";
 
 function Register() {
+  const history = useHistory();
   const [inputField, setInputField] = useState({
     username: "",
     email: "",
     password: "",
+    komootEmail: "",
+    komootPassword: "",
+    kommotID: "",
   });
-
-  const [register, setRegister] = useState("");
 
   const handleChangeInput = (e) => {
     const value = e.target.value;
@@ -24,16 +26,21 @@ function Register() {
     });
   };
 
-  async function RegisterUser() {
-    axios
+  async function RegisterUser(e) {
+    e.preventDefault();
+    await axios
       .post("/api/register", {
         username: inputField.username,
         email: inputField.email,
         password: inputField.password,
+        komootEmail: inputField.komootEmail,
+        komootPassword: inputField.komootPassword,
+        komootID: inputField.komootID,
       })
       .then((response) => {
-        console.log(response);
-        setRegister(true);
+        if (response.data.status === "ok") {
+          history.pushState("/login");
+        }
       });
   }
 
@@ -80,6 +87,47 @@ function Register() {
               placeholder="Password"
               name="password"
               value={inputField.password}
+              onChange={(e) => handleChangeInput(e)}
+            />
+          </FloatingLabel>
+          <FloatingLabel
+            controlId="floatingInput"
+            label="Komoot-Email"
+            className="mb-3"
+          >
+            <Form.Control
+              type="email"
+              placeholder="name@example.com"
+              name="komootEmail"
+              value={inputField.komootEmail}
+              onChange={(e) => handleChangeInput(e)}
+            />
+          </FloatingLabel>
+
+          <FloatingLabel
+            controlId="floatingPassword"
+            label="Komoot-Password"
+            className="mb-3"
+          >
+            <Form.Control
+              type="password"
+              placeholder="Password"
+              name="komootPassword"
+              value={inputField.komootPassword}
+              onChange={(e) => handleChangeInput(e)}
+            />
+          </FloatingLabel>
+
+          <FloatingLabel
+            className="mb-3"
+            controlId="floatingInput"
+            label="Komoot-ID"
+          >
+            <Form.Control
+              type="text"
+              placeholder="Komoot-ID"
+              name="komootID"
+              value={inputField.komootID}
               onChange={(e) => handleChangeInput(e)}
             />
           </FloatingLabel>

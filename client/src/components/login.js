@@ -6,13 +6,11 @@ import { FloatingLabel, Col, Row, Container } from "react-bootstrap";
 import { useState } from "react";
 import axios from "axios";
 
-function Login() {
+const Login = () => {
   const [inputField, setInputField] = useState({
     email: "",
     password: "",
   });
-
-  const [loginStatus, setLoginStatus] = useState("");
 
   const handleChangeInput = (e) => {
     const value = e.target.value;
@@ -22,24 +20,24 @@ function Login() {
     });
   };
 
-  async function LoginUser() {
-    axios
+  async function LoginUser(e) {
+    e.preventDefault();
+    await axios
       .post("/api/login", {
         email: inputField.email,
         password: inputField.password,
       })
       .then((response) => {
         console.log(response);
-        console.log("user is logged in");
-        if (!response.data.auth) {
-          setLoginStatus(false);
+        if (response.data.user) {
+          localStorage.setItem("token", response.data.user);
+          window.location.href = "/";
         } else {
-          console.log(response.data);
-          localStorage.setItem("token", response.data.token);
-          setLoginStatus(true);
+          alert("wrong email/password");
         }
       });
   }
+
   return (
     <Container>
       <Row>
@@ -80,6 +78,6 @@ function Login() {
       </Row>
     </Container>
   );
-}
+};
 
 export default Login;

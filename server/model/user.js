@@ -1,14 +1,17 @@
 const mongoose = require("mongoose");
 
-const UserSchema = new mongoose.Schema(
+const User = new mongoose.Schema(
   {
     username: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
+    komootEmail: { type: String, required: true },
+    komootPassword: { type: Array, required: true },
+    komootID: { type: String, required: true },
   },
-  { collection: "users" }
+  { collection: "user-data" }
 );
 
-const model = mongoose.model("UserSchema", UserSchema);
+const model = mongoose.model("UserData", User);
 
 module.exports = model;
