@@ -152,7 +152,7 @@ function Statistics({ isAuth: isAuth, component: Component, ...rest }) {
                 hanldeCompare();
               }}
             >
-              compare
+              Compare with Friend
             </Button>
           </Col>
         </Row>
@@ -274,7 +274,7 @@ function Statistics({ isAuth: isAuth, component: Component, ...rest }) {
                 hanldeCompare();
               }}
             >
-              compare
+              Compare with Friend
             </Button>
           </Col>
         </Row>
@@ -347,7 +347,7 @@ function Statistics({ isAuth: isAuth, component: Component, ...rest }) {
                 getHowOftenSportsFriend();
               }}
             >
-              getFriendData
+              Load Friend Data
             </Button>
           </Col>
         </Row>
@@ -534,7 +534,7 @@ function Statistics({ isAuth: isAuth, component: Component, ...rest }) {
                 getTotalSportValuesFriend();
               }}
             >
-              getFriendData
+              Load Friend Data
             </Button>
           </Col>
         </Row>
