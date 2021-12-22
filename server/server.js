@@ -13,7 +13,7 @@ const { spawn } = require("child_process");
 const User = require("./model/user");
 
 mongoose.connect(
-  "mongodb+srv://Broump:daniel11@cluster0.slhya.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
+  "mongodb+srv://Broump:YOXVKJ3kjFZ0Qut1@cluster0.slhya.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
 );
 
 const app = express();
@@ -48,7 +48,6 @@ app.post("/api/login", async (req, res) => {
       process.env.ACCESS_TOKEN_SECRET
     );
 
-    console.log("User is logged in");
     return res.json({ status: "ok", user: token });
   } else {
     return res.json({ status: "error", user: false });
@@ -56,8 +55,6 @@ app.post("/api/login", async (req, res) => {
 });
 
 app.post("/api/register", async (req, res) => {
-  console.log(req.body);
-
   if (!req.body.username || typeof req.body.username !== "string") {
     return res.json({ status: "error", error: "Invalid Username" });
   }
@@ -114,24 +111,6 @@ app.get("/api/user-data", async (req, res) => {
   }
 });
 
-app.get("/api/isauth", async (req, res) => {
-  const token = req.headers["x-access-token"];
-
-  try {
-    const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
-    const email = decoded.email;
-    const user = await User.findOne({ email: email });
-
-    if (user) {
-      return res.json({
-        status: "ok",
-      });
-    }
-  } catch (error) {
-    res.json({ status: "error", error: "invalid token" });
-  }
-});
-
 app.get("/api/all-tours", async (req, res) => {
   const token = req.headers["x-access-token"];
 
@@ -159,7 +138,302 @@ app.get("/api/all-tours", async (req, res) => {
     ]);
 
     childPython.stdout.on("data", (data) => {
+      res.json(data.toString("utf8"));
+    });
+  } catch (error) {
+    console.log(error);
+    res.json({ status: "error", error: "invlaid token" });
+  }
+});
+
+app.get("/api/get-feed", async (req, res) => {
+  try {
+    const childPython = spawn("python3", ["getTourData.py", "getFeed"]);
+
+    childPython.stdout.on("data", (data) => {
+      console.log(data);
+      res.json(data.toString("utf8"));
+    });
+  } catch (error) {
+    console.log(error);
+    res.json({ status: "error", error: "invlaid token" });
+  }
+});
+
+app.get("/api/howOftenSport", async (req, res) => {
+  const token = req.headers["x-access-token"];
+
+  try {
+    const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+    const email = decoded.email;
+    const user = await User.findOne({ email: email });
+
+    komootEmail = user.komootEmail;
+    komootID = user.komootID;
+    komootPassword = decrypt(user.komootPassword[0]);
+
+    queryObj = {
+      komootEmail: komootEmail,
+      komootID: komootID,
+      komootPassword: komootPassword,
+    };
+
+    const childPython = spawn("python3", [
+      "getTourData.py",
+      "howOftenSport",
+      komootID,
+      komootEmail,
+      komootPassword,
+    ]);
+
+    childPython.stdout.on("data", (data) => {
       res.json(JSON.parse(data.toString("utf8")));
+    });
+  } catch (error) {
+    console.log(error);
+    res.json({ status: "error", error: "invlaid token" });
+  }
+});
+
+app.get("/api/HowOftenSportsFriend", async (req, res) => {
+  const friendEmail = req.headers["friendemail"];
+
+  try {
+    const user = await User.findOne({ email: friendEmail });
+
+    komootEmail = user.komootEmail;
+    komootID = user.komootID;
+    komootPassword = decrypt(user.komootPassword[0]);
+
+    queryObj = {
+      komootEmail: komootEmail,
+      komootID: komootID,
+      komootPassword: komootPassword,
+    };
+
+    const childPython = spawn("python3", [
+      "getTourData.py",
+      "howOftenSport",
+      komootID,
+      komootEmail,
+      komootPassword,
+    ]);
+
+    childPython.stdout.on("data", (data) => {
+      res.json(JSON.parse(data.toString("utf8")));
+    });
+  } catch (error) {
+    console.log(error);
+    res.json({ status: "error", error: "invlaid token" });
+  }
+});
+
+app.get("/api/totalSportValues", async (req, res) => {
+  const token = req.headers["x-access-token"];
+
+  try {
+    const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+    const email = decoded.email;
+    const user = await User.findOne({ email: email });
+
+    komootEmail = user.komootEmail;
+    komootID = user.komootID;
+    komootPassword = decrypt(user.komootPassword[0]);
+
+    queryObj = {
+      komootEmail: komootEmail,
+      komootID: komootID,
+      komootPassword: komootPassword,
+    };
+
+    const childPython = spawn("python3", [
+      "getTourData.py",
+      "getTotalSportValues",
+      komootID,
+      komootEmail,
+      komootPassword,
+    ]);
+
+    childPython.stdout.on("data", (data) => {
+      res.json(JSON.parse(data.toString("utf8")));
+    });
+  } catch (error) {
+    console.log(error);
+    res.json({ status: "error", error: "invlaid token" });
+  }
+});
+
+app.get("/api/totalSportValuesFriend", async (req, res) => {
+  const friendEmail = req.headers["friendemail"];
+
+  try {
+    const user = await User.findOne({ email: friendEmail });
+
+    komootEmail = user.komootEmail;
+    komootID = user.komootID;
+    komootPassword = decrypt(user.komootPassword[0]);
+
+    queryObj = {
+      komootEmail: komootEmail,
+      komootID: komootID,
+      komootPassword: komootPassword,
+    };
+
+    const childPython = spawn("python3", [
+      "getTourData.py",
+      "getTotalSportValues",
+      komootID,
+      komootEmail,
+      komootPassword,
+    ]);
+
+    childPython.stdout.on("data", (data) => {
+      res.json(JSON.parse(data.toString("utf8")));
+    });
+  } catch (error) {
+    console.log(error);
+    res.json({ status: "error", error: "invlaid token" });
+  }
+});
+
+app.get("/api/totalSportValuesPerYear", async (req, res) => {
+  const token = req.headers["x-access-token"];
+  const year = req.headers["year"];
+
+  try {
+    const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+    const email = decoded.email;
+    const user = await User.findOne({ email: email });
+
+    komootEmail = user.komootEmail;
+    komootID = user.komootID;
+    komootPassword = decrypt(user.komootPassword[0]);
+
+    queryObj = {
+      komootEmail: komootEmail,
+      komootID: komootID,
+      komootPassword: komootPassword,
+    };
+
+    const childPython = spawn("python3", [
+      "getTourData.py",
+      "getTotalSportValues",
+      komootID,
+      komootEmail,
+      komootPassword,
+      year,
+    ]);
+
+    childPython.stdout.on("data", (data) => {
+      res.json(JSON.parse(data.toString("utf8")));
+    });
+  } catch (error) {
+    console.log(error);
+    res.json({ status: "error", error: "invlaid token" });
+  }
+});
+
+app.get("/api/search-user", async (req, res) => {
+  const userToFind = req.headers["user"];
+
+  try {
+    const user = await User.findOne({ username: userToFind });
+
+    return res.json({
+      username: user.username,
+      email: user.email,
+    });
+  } catch (error) {
+    console.log(error);
+    res.json({ status: "error", error: "user not found" });
+  }
+});
+
+app.get("/api/delete-friend", async (req, res) => {
+  const token = req.headers["x-access-token"];
+  const friendToDelete = req.headers["usertodelete"];
+
+  try {
+    const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+    const email = decoded.email;
+    const user = await User.findOneAndUpdate(
+      { email: email },
+      { $pull: { friends: friendToDelete } }
+    );
+  } catch (error) {
+    console.log(error);
+    res.json({ status: "error", error: "invlaid token" });
+  }
+});
+
+app.get("/api/add-friend", async (req, res) => {
+  const token = req.headers["x-access-token"];
+  const friendEmail = req.headers["email"];
+
+  try {
+    const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+    const email = decoded.email;
+    const user = await User.findOneAndUpdate(
+      { email: email },
+      { $push: { friends: friendEmail } }
+    );
+  } catch (error) {
+    console.log(error);
+    res.json({ status: "error", error: "invlaid token" });
+  }
+});
+
+app.get("/api/list-friends", async (req, res) => {
+  const token = req.headers["x-access-token"];
+
+  try {
+    const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+    const email = decoded.email;
+    const user = await User.findOne({ email: email });
+
+    return res.json({
+      listOfFriends: user.friends,
+    });
+  } catch (error) {
+    console.log(error);
+    res.json({ status: "error", error: "invlaid token" });
+  }
+});
+
+app.get("/api/update-tour", async (req, res) => {
+  const token = req.headers["x-access-token"];
+  const is_private = req.headers["is_private"];
+  const tour_text = req.headers["tour_text"];
+  const tour_id = req.headers["tour_id"];
+
+  try {
+    const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+    const email = decoded.email;
+    const user = await User.findOne({ email: email });
+
+    komootEmail = user.komootEmail;
+    komootID = user.komootID;
+    komootPassword = decrypt(user.komootPassword[0]);
+
+    queryObj = {
+      komootEmail: komootEmail,
+      komootID: komootID,
+      komootPassword: komootPassword,
+    };
+
+    const childPython = spawn("python3", [
+      "getTourData.py",
+      "updateTour",
+      komootID,
+      komootEmail,
+      komootPassword,
+      is_private,
+      tour_id,
+      tour_text,
+    ]);
+
+    childPython.stdout.on("data", (data) => {
+      console.log(data);
     });
   } catch (error) {
     console.log(error);

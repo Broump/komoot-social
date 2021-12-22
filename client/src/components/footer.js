@@ -4,6 +4,7 @@ import Navbar from "react-bootstrap/Navbar";
 import { Nav, Container } from "react-bootstrap";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { BrowserRouter as Router, Link, Route, Switch } from "react-router-dom";
 
 function Footer() {
   const [username, setUsername] = useState("");
@@ -20,12 +21,21 @@ function Footer() {
       });
   });
   return (
-    <Navbar bg="dark" variant="dark" expand="lg" fixed="bottom">
+    <Navbar bg="dark" variant="dark" expand="lg" fixed="bottom" display="block">
       <Container fluid>
-        <Nav>
-          <Nav.Link>Impressum</Nav.Link>
-          <Navbar.Text>Signed in as: {username}</Navbar.Text>
-        </Nav>
+        <Switch>
+          <Nav>
+            <Nav.Link>Impressum</Nav.Link>
+            {username ? (
+              <Navbar.Text>Signed in as: {username}</Navbar.Text>
+            ) : (
+              <Navbar.Text>
+                <Link to="/login">login</Link>/
+                <Link to="/register">register</Link>
+              </Navbar.Text>
+            )}
+          </Nav>
+        </Switch>
       </Container>
     </Navbar>
   );

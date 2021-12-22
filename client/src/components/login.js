@@ -5,6 +5,7 @@ import Button from "react-bootstrap/Button";
 import { FloatingLabel, Col, Row, Container } from "react-bootstrap";
 import { useState } from "react";
 import axios from "axios";
+import { BrowserRouter as Router, Link, Route, Switch } from "react-router-dom";
 
 const Login = () => {
   const [inputField, setInputField] = useState({
@@ -74,6 +75,9 @@ const Login = () => {
             Submit
           </Button>
           <Col />
+          <Switch>
+            <Link to="/register">Register</Link>
+          </Switch>
         </Form>
       </Row>
     </Container>

@@ -8,6 +8,7 @@ const User = new mongoose.Schema(
     komootEmail: { type: String, required: true },
     komootPassword: { type: Array, required: true },
     komootID: { type: String, required: true },
+    friends: [String],
   },
   { collection: "user-data" }
 );

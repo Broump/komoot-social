@@ -1,7 +1,6 @@
 {
   "name": "komoot-social",
   "version": "1.0.0",
-  "description": "",
   "main": "index.js",
   "scripts": {
     "start": "nodemon server.js",
@@ -30,5 +29,6 @@
     "nodemon": "^2.0.15",
     "path": "^0.12.7",
     "python3": "^0.0.1"
-  }
+  },
+  "description": ""
 }

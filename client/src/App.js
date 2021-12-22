@@ -7,60 +7,79 @@ import Register from "./components/register";
 import ProtectedRoute from "./components/protectedRoute";
 import Profile from "./components/profile";
 import Tours from "./components/tours";
+import Statistics from "./components/statistics";
+import Friends from "./components/friends";
+import Feed from "./components/feed";
 import axios from "axios";
 import React from "react";
 
-import { useHistory } from "react-router";
+import { useHistory, withRouter } from "react-router";
 import { Container } from "react-bootstrap";
 import { useState, useEffect } from "react";
 import { BrowserRouter as Router, Link, Route, Switch } from "react-router-dom";
 
 function App() {
-  const [userIsAuth, setUserIsAuth] = useState(true);
-  const history = useHistory();
+  const [userIsAuth, setUserIsAuth] = useState(false);
+  const [checkingAuth, setCheckingAuth] = useState(false);
+
+  const isUserAuth = async () => {
+    try {
+      if (localStorage.getItem("token")) {
+        setUserIsAuth(true);
+        setCheckingAuth(true);
+      } else {
+        setUserIsAuth(false);
+        setCheckingAuth(true);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   useEffect(() => {
-    axios
-      .get("/api/isauth", {
-        headers: {
-          "x-access-token": localStorage.getItem("token"),
-        },
-      })
-      .then((response) => {
-        if (response.data.status === "ok") {
-          setUserIsAuth(true);
-        }
-        if (response.data.status === "error") {
-          localStorage.removeItem("token");
-        }
-      });
-  });
+    isUserAuth();
+  }, []);
 
-  return (
-    <div>
-      <Navigation />
-      <Router>
-        <Switch>
-          <Route path="/" exact></Route>
-          <Route path="/login" exact component={Login}></Route>
-          <Route path="/register" exact component={Register}></Route>
-          <ProtectedRoute path="/profile" component={Profile} isAuth={true} />
+  if (checkingAuth) {
+    return (
+      <div>
+        <Router>
+          <Navigation />
+          <Route exact path="/"></Route>
+          <Route exact path="/login" component={Login}></Route>
+          <Route exact path="/register" component={Register}></Route>
           <ProtectedRoute
+            exact
+            path="/profile"
+            component={withRouter(Profile)}
+            isAuth={userIsAuth}
+          />
+          <ProtectedRoute
+            exact
+            path="/friends"
+            component={withRouter(Friends)}
+            isAuth={userIsAuth}
+          />
+          <ProtectedRoute
+            exact
             path="/statistics"
-            component={Profile}
+            exact
+            component={Statistics}
             isAuth={userIsAuth}
           />
           <ProtectedRoute
-            path="/notion"
-            component={Profile}
+            exact
+            path="/tours"
+            exact
+            component={Tours}
             isAuth={userIsAuth}
           />
-          <ProtectedRoute path="/tours" component={Tours} isAuth={true} />
-        </Switch>
-      </Router>
-      <Footer />
-    </div>
-  );
+          <Footer />
+        </Router>
+      </div>
+    );
+  } else {
+    return <div>Loading...</div>;
+  }
 }
-
 export default App;
