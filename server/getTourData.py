@@ -69,7 +69,7 @@ class KomootSocial:
       
       #checking if a Table with given client_id exists and when not creating a Table
       mycursor = self.mydb.cursor()
-      sql = f"CREATE TABLE IF NOT EXISTS _{self.client_id} (tour_date DATE, tour_distance FLOAT, tour_duration INT, tour_elevation_up INT, tour_elevation_down INT, tour_map_image TEXT, tour_name VARCHAR(64), tour_sport VARCHAR(64), tour_start_point VARCHAR(64), tour_type VARCHAR(64), tour_id INT UNIQUE, is_private BIT DEFAULT 1, tour_text TEXT DEFAULT NULL, tour_creator_id INT)"
+      sql = f"CREATE TABLE IF NOT EXISTS _{self.client_id} (tour_date DATE, tour_distance FLOAT, tour_duration INT, tour_elevation_up INT, tour_elevation_down INT, tour_map_image TEXT, tour_name VARCHAR(64), tour_sport VARCHAR(64), tour_start_point VARCHAR(64), tour_type VARCHAR(64), tour_id INT UNIQUE, is_private BIT DEFAULT 1, tour_text TEXT DEFAULT NULL, tour_creator_id VARCHAR(64))"
       mycursor.execute(sql)
       self.mydb.commit()
       
@@ -181,7 +181,8 @@ class KomootSocial:
         d['tour_start_point'] = row[11]
         d['tour_type'] = row[12]
         d['tour_creator_id'] = row[13]
-        for x in collection.find({"komootID":row[13]},{"_id": 0,"username":1}):
+        tour_creator_id = row[13]
+        for x in collection.find({"komootID":tour_creator_id},{"_id": 0,"username":1}):
               d['tour_creator_username'] = x["username"]
         d['tour_user_id'] = table[tableNumber].replace("_","")
         tour_user_id = table[tableNumber].replace("_","")
@@ -416,7 +417,7 @@ class KomootSocial:
 """
 ks = KomootSocial(673338137185,"DanielMuenstermann18@gmail.com","DPrQh5bqv1TPutMU5uCP")
 ks.getTourData()
-returnData = ks.getHowManyToursInMonthPerYear(2021)
+returnData = ks.getFeed()
 print(returnData)
 
 

@@ -45,7 +45,7 @@ function App() {
       <div>
         <Router>
           <Navigation />
-          <Route exact path="/"></Route>
+          <Route exact path="/" component={Feed}></Route>
           <Route exact path="/login" component={Login}></Route>
           <Route exact path="/register" component={Register}></Route>
           <ProtectedRoute
