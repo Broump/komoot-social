@@ -15,12 +15,20 @@ class KomootSocial:
     self.client_email = client_email
     self.client_password = client_password
     #establish connection to MySQL Database
+    # self.mydb = mysql.connector.connect(
+    #     host="localhost",
+    #     user="b2891c4b7acbfd",
+    #     password="b13e7c2a",
+    #     database="komoot_social"
+    #   )
     self.mydb = mysql.connector.connect(
-        host="localhost",
+        host="eu-cdbr-west-02.cleardb.net",
         user="root",
         password="",
-        database="komoot_social"
+        database="heroku_ad68d344bb09a53"
       )
+    
+  
   
   #define getTourData function for fetching TourData from Komoot and pasting it into the Databae
   def getTourData(self):
