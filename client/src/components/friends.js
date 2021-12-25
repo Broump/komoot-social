@@ -22,12 +22,16 @@ function Friends({ isAuth: isAuth, component: Component, ...rest }) {
 
   const deleteFriend = async (friendToDelete) => {
     try {
-      const deleteUser = await axios.get("/api/delete-friend", {
-        headers: {
-          "x-access-token": localStorage.getItem("token"),
-          usertodelete: friendToDelete,
-        },
-      });
+      const deleteUser = await axios
+        .get("/api/delete-friend", {
+          headers: {
+            "x-access-token": localStorage.getItem("token"),
+            usertodelete: friendToDelete,
+          },
+        })
+        .then((response) => {
+          setListOfFriends(listOfFriends.slice(friendToDelete));
+        });
     } catch (err) {
       console.error(err);
     }
@@ -63,6 +67,8 @@ function Friends({ isAuth: isAuth, component: Component, ...rest }) {
         email: friendEmail,
       },
     });
+    setListOfFriends([...listOfFriends, friendEmail]);
+    setFoundUsers([]);
   };
 
   const getListOfFriends = async () => {

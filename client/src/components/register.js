@@ -8,7 +8,6 @@ import { useHistory } from "react-router";
 import axios from "axios";
 
 function Register() {
-  const history = useHistory();
   const [inputField, setInputField] = useState({
     username: "",
     email: "",
@@ -22,6 +21,7 @@ function Register() {
     const value = e.target.value;
     setInputField({
       ...inputField,
+      [e.target.name]: value,
     });
   };
 
@@ -35,6 +35,7 @@ function Register() {
       komootPassword: inputField.komootPassword,
       komootID: inputField.komootID,
     });
+    window.location.href = "/login";
   }
 
   return (

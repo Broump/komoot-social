@@ -151,7 +151,6 @@ app.get("/api/get-feed", async (req, res) => {
     const childPython = spawn("python3", ["getTourData.py", "getFeed"]);
 
     childPython.stdout.on("data", (data) => {
-      console.log(data);
       res.json(data.toString("utf8"));
     });
   } catch (error) {

@@ -23,8 +23,6 @@ function Tours({ isAuth: isAuth, component: Component, ...rest }) {
     tour_id: null,
   });
 
-  console.log(changedTourValues);
-
   const [html, setHtml] = useState(null);
 
   const handleEditing = (tour_id) => {
@@ -70,7 +68,6 @@ function Tours({ isAuth: isAuth, component: Component, ...rest }) {
   };
 
   const UpdateTour = (tour_id) => {
-    console.log("Trying to Update " + tour_id);
     axios.get("/api/update-tour", {
       headers: {
         "x-access-token": localStorage.getItem("token"),
