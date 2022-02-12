@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import Chart, { Chart as ChartJS, defaults } from "react-chartjs-2";
 import Form from "react-bootstrap/Form";
-import { Bar } from "react-chartjs-2";
+import { Bar, Line } from "react-chartjs-2";
 import {
   Card,
   ListGroup,
@@ -25,6 +25,11 @@ function Statistics({ isAuth: isAuth, component: Component, ...rest }) {
   const [selectedFriend, setSelectedFriend] = useState("");
   const [listOfFriends, setListOfFriends] = useState([]);
   const [compareStatus, setCompareStatus] = useState(false);
+  const [toursInMonthPerYear, setToursInMonthPerYear] = useState([]);
+  const [toursInMonthPerYearFriend, setToursInMonthPerYearFriend] = useState([]);
+  const [selectedYear, setSelectedYear] = useState("");
+
+  
 
   const getListOfFriends = async () => {
     try {
@@ -58,7 +63,7 @@ function Statistics({ isAuth: isAuth, component: Component, ...rest }) {
 
   const getHowOftenSportsFriend = async () => {
     try {
-      console.log(selectedFriend);
+      
       const totalFriend = await axios.get("/api/HowOftenSportsFriend", {
         headers: {
           friendemail: selectedFriend,
@@ -89,7 +94,7 @@ function Statistics({ isAuth: isAuth, component: Component, ...rest }) {
 
   const getTotalSportValuesFriend = async () => {
     try {
-      console.log(selectedFriend);
+      
       const totalFriend = await axios.get("/api/totalSportValuesFriend", {
         headers: {
           friendemail: selectedFriend,
@@ -103,6 +108,41 @@ function Statistics({ isAuth: isAuth, component: Component, ...rest }) {
     }
   };
 
+  const gettoursInMonthPerYear = async (year) => {
+    try {
+      const count = await axios.get("/api/toursInMonthPerYear", {
+        headers: {
+          "x-access-token": localStorage.getItem("token"),
+          year: year,
+        },
+      });
+      if (count) {
+        setToursInMonthPerYear(count.data);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const gettoursInMonthPerYearFriend = async () => {
+    try {
+      
+      const totalFriend = await axios.get("/api/toursInMonthPerYearFriend", {
+        headers: {
+          friendemail: selectedFriend,
+          year: selectedYear,
+        },
+      });
+      if (totalFriend) {
+        setToursInMonthPerYearFriend(totalFriend.data);
+        
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+  
+
   const hanldeCompare = () => {
     if (compareStatus === false) {
       setCompareStatus(true);
@@ -110,11 +150,17 @@ function Statistics({ isAuth: isAuth, component: Component, ...rest }) {
       setCompareStatus(false);
     }
   };
+  
+
+  const handleYear = () => {
+    gettoursInMonthPerYear(selectedYear);
+  };
 
   useEffect(() => {
     getHowOftenSports();
     getTotalSportValues();
     getListOfFriends();
+    
   }, []);
 
   const handleStatisticInput = (e) => {
@@ -131,6 +177,15 @@ function Statistics({ isAuth: isAuth, component: Component, ...rest }) {
     }
   };
 
+  const handleYearInput = (e) => {
+    const value = e.target.value;
+    if (value !== "none") {
+      setSelectedYear(value);
+    }
+  };
+
+  
+
   if (selectedStatistic === "howoften" && compareStatus === false) {
     return (
       <Container>
@@ -144,6 +199,7 @@ function Statistics({ isAuth: isAuth, component: Component, ...rest }) {
               <option value="none">--Select Statistic--</option>
               <option value="total">Total Sport Values</option>
               <option value="howoften">How Often Sporttypes</option>
+              <option value="sportPerMonth">Sport per Month</option>
             </Form.Control>
             <Button
               className="mt-4"
@@ -266,6 +322,7 @@ function Statistics({ isAuth: isAuth, component: Component, ...rest }) {
               <option value="none">--Select Statistic--</option>
               <option value="total">Total Sport Values</option>
               <option value="howoften">How Often Sporttypes</option>
+              <option value="sportPerMonth">Sport per Month</option>
             </Form.Control>
             <Button
               variant="outline-success"
@@ -328,6 +385,7 @@ function Statistics({ isAuth: isAuth, component: Component, ...rest }) {
               <option value="none">--Select Statistic--</option>
               <option value="total">Total Sport Values</option>
               <option value="howoften">How Often Sporttypes</option>
+              <option value="sportPerMonth">Sport per Month</option>
             </Form.Control>
             <Form.Control
               className="mt-2"
@@ -515,6 +573,7 @@ function Statistics({ isAuth: isAuth, component: Component, ...rest }) {
               <option value="none">--Select Statistic--</option>
               <option value="total">Total Sport Values</option>
               <option value="howoften">How Often Sporttypes</option>
+              <option value="sportPerMonth">Sport per Month</option>
             </Form.Control>
             <Form.Control
               className="mt-2"
@@ -583,7 +642,7 @@ function Statistics({ isAuth: isAuth, component: Component, ...rest }) {
         </Row>
       </Container>
     );
-  } else {
+  } else if (selectedStatistic === "sportPerMonth" && compareStatus === false) {
     return (
       <Container>
         <Row>
@@ -596,6 +655,325 @@ function Statistics({ isAuth: isAuth, component: Component, ...rest }) {
               <option value="none">--Select Statistic--</option>
               <option value="total">Total Sport Values</option>
               <option value="howoften">How Often Sporttypes</option>
+              <option value="sportPerMonth">Sport per Month</option>
+            </Form.Control>
+            <Form.Control
+              as="select"
+              custom
+              onChange={(e) => handleYearInput(e)}
+            > 
+              <option value="none">--Select Year--</option>
+              <option value="2022">2022</option>
+              <option value="2021">2021</option>
+              <option value="2020">2020</option>
+              <option value="2019">2019</option>
+            </Form.Control>
+            <Button
+              variant="outline-success"
+              className="mt-3"
+              onClick={() => {
+                handleYear();
+              }}
+            >
+              Select Year
+            </Button>
+            <Button
+              variant="outline-success"
+              className="mt-3"
+              onClick={() => {
+                hanldeCompare();
+              }}
+            >
+              Compare with Friend
+            </Button>
+          </Col>
+        </Row>
+        <Row>
+          <Col>
+            {toursInMonthPerYear.map((tours) => {
+              return (
+                <div>
+                  <Line
+                    className="mt-3"
+                    data={{
+                      labels: [
+                        'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'Dezember',
+                      ],
+                      datasets: [
+                        {
+                          label: "# number of sporttypes per month",
+                          data: [
+                            tours.January,
+                            tours.February,
+                            tours.March,
+                            tours.April,
+                            tours.May,
+                            tours.June,
+                            tours.July,
+                            tours.August,
+                            tours.September,
+                            tours.October,
+                            tours.November,
+                            tours.Dezember,
+                          ],
+                          backgroundColor: [
+                            "rgba(255, 99, 132, 0.2)",
+                            "rgba(54, 162, 235, 0.2)",
+                            "rgba(255, 206, 86, 0.2)",
+                            "rgba(75, 192, 192, 0.2)",
+                            "rgba(153, 102, 255, 0.2)",
+                            "rgba(255, 159, 64, 0.2)",
+                            "rgba(255, 159, 64, 0.2)",
+                            "rgba(255, 159, 64, 0.2)",
+                            "rgba(255, 159, 64, 0.2)",
+                            "rgba(255, 159, 64, 0.2)",
+                            "rgba(255, 159, 64, 0.2)",
+                            "rgba(255, 159, 64, 0.2)",
+                          ],
+                          borderColor: [
+                            "rgba(255, 99, 132, 1)",
+                            "rgba(54, 162, 235, 1)",
+                            "rgba(255, 206, 86, 1)",
+                            "rgba(75, 192, 192, 1)",
+                            "rgba(153, 102, 255, 1)",
+                            "rgba(255, 159, 64, 1)",
+                            "rgba(255, 159, 64, 0.2)",
+                            "rgba(255, 159, 64, 0.2)",
+                            "rgba(255, 159, 64, 0.2)",
+                            "rgba(255, 159, 64, 0.2)",
+                            "rgba(255, 159, 64, 0.2)",
+                            "rgba(255, 159, 64, 0.2)",
+                          ],
+                          borderWidth: 2,
+                          skipNull: false,
+                        },
+                      ],
+                    }}
+                    height={400}
+                    width={400}
+                    options={{
+                      maintainAspectRatio: false,
+                      scales: {
+                        yAxes: {
+                          ticks: {
+                            beginAtZero: true,
+                          },
+                        },
+                      },
+                    }}
+                  />
+                </div>
+              );
+            })}
+          </Col>
+        </Row>
+      </Container>
+    );
+  } else if (selectedStatistic === "sportPerMonth" && compareStatus === true) {
+    return (
+      <Container>
+        <Row>
+          <Col>
+            <Form.Control
+              as="select"
+              custom
+              onChange={(e) => handleStatisticInput(e)}
+            >
+              <option value="none">--Select Statistic--</option>
+              <option value="total">Total Sport Values</option>
+              <option value="howoften">How Often Sporttypes</option>
+              <option value="sportPerMonth">Sport per Month</option>
+            </Form.Control>
+            <Form.Control
+              className="mt-2"
+              as="select"
+              custom
+              onChange={(e) => handleFriendInput(e)}
+            >
+              <option value="none">--Select Friend To Compare--</option>
+              {listOfFriends.map((friend) => (
+                <option value={friend}>{friend}</option>
+              ))}
+            </Form.Control>
+            <Button
+              variant="outline-success"
+              className="mt-3"
+              onClick={() => {
+                gettoursInMonthPerYearFriend();
+              }}
+            >
+              Load Friend Data
+            </Button>
+            <Form.Control
+              as="select"
+              custom
+              onChange={(e) => handleYearInput(e)}
+            > 
+              <option value="none">--Select Year--</option>
+              <option value="2022">2022</option>
+              <option value="2021">2021</option>
+              <option value="2020">2020</option>
+              <option value="2019">2019</option>
+            </Form.Control>
+            <Button
+              variant="outline-success"
+              className="mt-3"
+              onClick={() => {
+                handleYear();
+              }}
+            >
+              Select Year
+            </Button>
+          </Col>
+        </Row>
+        <Row>
+          <Col>
+            {toursInMonthPerYear.map((tours) => {
+              return toursInMonthPerYearFriend.map((toursFriend) => {
+                return (
+                  <div>
+                    <Line
+                    className="mt-3"
+                    data={{
+                      labels: [
+                        'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'Dezember',
+                      ],
+                      datasets: [
+                        {
+                          label: "# number of sporttypes per month",
+                          data: [
+                            tours.January,
+                            tours.February,
+                            tours.March,
+                            tours.April,
+                            tours.May,
+                            tours.June,
+                            tours.July,
+                            tours.August,
+                            tours.September,
+                            tours.October,
+                            tours.November,
+                            tours.Dezember,
+                          ],
+                          backgroundColor: [
+                            "rgba(255, 99, 132, 0.2)",
+                            "rgba(54, 162, 235, 0.2)",
+                            "rgba(255, 206, 86, 0.2)",
+                            "rgba(75, 192, 192, 0.2)",
+                            "rgba(153, 102, 255, 0.2)",
+                            "rgba(255, 159, 64, 0.2)",
+                            "rgba(255, 159, 64, 0.2)",
+                            "rgba(255, 159, 64, 0.2)",
+                            "rgba(255, 159, 64, 0.2)",
+                            "rgba(255, 159, 64, 0.2)",
+                            "rgba(255, 159, 64, 0.2)",
+                            "rgba(255, 159, 64, 0.2)",
+                          ],
+                          borderColor: [
+                            "rgba(255, 99, 132, 1)",
+                            "rgba(54, 162, 235, 1)",
+                            "rgba(255, 206, 86, 1)",
+                            "rgba(75, 192, 192, 1)",
+                            "rgba(153, 102, 255, 1)",
+                            "rgba(255, 159, 64, 1)",
+                            "rgba(255, 159, 64, 0.2)",
+                            "rgba(255, 159, 64, 0.2)",
+                            "rgba(255, 159, 64, 0.2)",
+                            "rgba(255, 159, 64, 0.2)",
+                            "rgba(255, 159, 64, 0.2)",
+                            "rgba(255, 159, 64, 0.2)",
+                          ],
+                          borderWidth: 2,
+                          skipNull: true,
+                        },
+                        {
+                          label: "# number of sporttypes per month " + selectedFriend,
+                          data: [
+                            toursFriend.January,
+                            toursFriend.February,
+                            toursFriend.March,
+                            toursFriend.April,
+                            toursFriend.May,
+                            toursFriend.June,
+                            toursFriend.July,
+                            toursFriend.August,
+                            toursFriend.September,
+                            toursFriend.October,
+                            toursFriend.November,
+                            toursFriend.Dezember,
+                          ],
+                          backgroundColor: [
+                            "rgba(255, 99, 132, 0.2)",
+                            "rgba(54, 162, 235, 0.2)",
+                            "rgba(255, 206, 86, 0.2)",
+                            "rgba(75, 192, 192, 0.2)",
+                            "rgba(153, 102, 255, 0.2)",
+                            "rgba(255, 159, 64, 0.2)",
+                            "rgba(255, 159, 64, 0.2)",
+                            "rgba(255, 159, 64, 0.2)",
+                            "rgba(255, 159, 64, 0.2)",
+                            "rgba(255, 159, 64, 0.2)",
+                            "rgba(255, 159, 64, 0.2)",
+                            "rgba(255, 159, 64, 0.2)",
+                            "rgba(255, 159, 64, 0.2)",
+                          ],
+                          borderColor: [
+                            "rgba(255, 99, 132, 1)",
+                            "rgba(54, 162, 235, 1)",
+                            "rgba(255, 206, 86, 1)",
+                            "rgba(75, 192, 192, 1)",
+                            "rgba(153, 102, 255, 1)",
+                            "rgba(255, 159, 64, 1)",
+                            "rgba(255, 159, 64, 0.2)",
+                            "rgba(255, 159, 64, 0.2)",
+                            "rgba(255, 159, 64, 0.2)",
+                            "rgba(255, 159, 64, 0.2)",
+                            "rgba(255, 159, 64, 0.2)",
+                            "rgba(255, 159, 64, 0.2)",
+                            "rgba(255, 159, 64, 0.2)",
+                          ],
+                          borderWidth: 2,
+                          skipNull: true,
+                        },
+                      ],
+                    }}
+                    height={400}
+                    width={400}
+                    options={{
+                      maintainAspectRatio: false,
+                      scales: {
+                        yAxes: {
+                          ticks: {
+                            beginAtZero: true,
+                          },
+                        },
+                      },
+                    }}
+                  />
+                  </div>
+                );
+              });
+            })}
+          </Col>
+        </Row>
+      </Container>
+    );
+  }
+
+  else {
+    return (
+      <Container>
+        <Row>
+          <Col>
+            <Form.Control
+              as="select"
+              custom
+              onChange={(e) => handleStatisticInput(e)}
+            >
+              <option value="none">--Select Statistic--</option>
+              <option value="total">Total Sport Values</option>
+              <option value="howoften">How Often Sporttypes</option>
+              <option value="sportPerMonth">Sport per Month</option>
             </Form.Control>
           </Col>
         </Row>

@@ -332,6 +332,78 @@ app.get("/api/totalSportValuesPerYear", async (req, res) => {
   }
 });
 
+app.get("/api/toursInMonthPerYear", async (req, res) => {
+  const token = req.headers["x-access-token"];
+  const year = req.headers["year"];
+
+  try {
+    const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+    const email = decoded.email;
+    const user = await User.findOne({ email: email });
+
+    komootEmail = user.komootEmail;
+    komootID = user.komootID;
+    komootPassword = decrypt(user.komootPassword[0]);
+
+    queryObj = {
+      komootEmail: komootEmail,
+      komootID: komootID,
+      komootPassword: komootPassword,
+    };
+
+    const childPython = spawn("python3", [
+      "getTourData.py",
+      "toursInMonthPerYear",
+      komootID,
+      komootEmail,
+      komootPassword,
+      year,
+    ]);
+
+    childPython.stdout.on("data", (data) => {
+      res.json(JSON.parse(data.toString("utf8")));
+    });
+  } catch (error) {
+    console.log(error);
+    res.json({ status: "error", error: "invlaid token" });
+  }
+});
+
+app.get("/api/toursInMonthPerYearFriend", async (req, res) => {
+  const friendEmail = req.headers["friendemail"];
+  const year = req.headers["year"];
+
+  try {
+    const user = await User.findOne({ email: friendEmail });
+
+    komootEmail = user.komootEmail;
+    komootID = user.komootID;
+    komootPassword = decrypt(user.komootPassword[0]);
+
+    queryObj = {
+      komootEmail: komootEmail,
+      komootID: komootID,
+      komootPassword: komootPassword,
+    };
+
+    const childPython = spawn("python3", [
+      "getTourData.py",
+      "toursInMonthPerYear",
+      komootID,
+      komootEmail,
+      komootPassword,
+      year,
+    ]);
+
+    childPython.stdout.on("data", (data) => {
+      res.json(JSON.parse(data.toString("utf8")));
+    });
+  } catch (error) {
+    console.log(error);
+    res.json({ status: "error", error: "invlaid token" });
+  }
+});
+
 app.get("/api/search-user", async (req, res) => {
   const userToFind = req.headers["user"];
 
@@ -440,6 +512,6 @@ app.get("/api/update-tour", async (req, res) => {
   }
 });
 
-app.listen(process.env.PORT || 3001, () => {
+app.listen(3001, () => {
   console.log("Server is running on PORT 3001");
 });

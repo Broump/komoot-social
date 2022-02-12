@@ -124,6 +124,9 @@ function Tours({ isAuth: isAuth, component: Component, ...rest }) {
                               Date: {tour.tour_date}
                             </ListGroup.Item>
                             <ListGroup.Item>
+                              Start: {tour.tour_start_point}
+                            </ListGroup.Item>
+                            <ListGroup.Item>
                               Distance: {tour.tour_distance} km
                             </ListGroup.Item>
                             <ListGroup.Item>

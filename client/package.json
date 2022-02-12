@@ -31,12 +31,12 @@
     "web-vitals": "^1.0.1"
   },
   "scripts": {
-    "start": "react-scripts --openssl-legacy-provider start",
+    "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
-  "proxy": "https://kommotsocial.herokuapp.com/",
+  "proxy": "http://localhost:3001",
   "eslintConfig": {
     "extends": [
       "react-app",
