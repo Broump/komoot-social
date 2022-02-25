@@ -414,6 +414,8 @@ app.get("/api/search-user", async (req, res) => {
       username: user.username,
       email: user.email,
     });
+
+    console.log(user.name + user.email)
   } catch (error) {
     console.log(error);
     res.json({ status: "error", error: "user not found" });
@@ -421,15 +423,13 @@ app.get("/api/search-user", async (req, res) => {
 });
 
 app.get("/api/delete-friend", async (req, res) => {
-  const token = req.headers["x-access-token"];
   const friendToDelete = req.headers["usertodelete"];
 
   try {
-    const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
-    const email = decoded.email;
-    const user = await User.findOneAndUpdate(
-      { email: email },
-      { $pull: { friends: friendToDelete } }
+    const user = await User.findOne({ email: usertodelete });
+    const deleteuser = await User.findOneAndUpdate(
+      { email: user.email },
+      { $pull: { friends: [user.email, user.username] } }
     );
   } catch (error) {
     console.log(error);
@@ -438,15 +438,14 @@ app.get("/api/delete-friend", async (req, res) => {
 });
 
 app.get("/api/add-friend", async (req, res) => {
-  const token = req.headers["x-access-token"];
   const friendEmail = req.headers["email"];
 
   try {
-    const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
-    const email = decoded.email;
-    const user = await User.findOneAndUpdate(
-      { email: email },
-      { $push: { friends: friendEmail } }
+    const user = await User.findOne({ email: friendEmail });
+
+    const adduser = await User.findOneAndUpdate(
+      { email: user.email },
+      { $push: { friends: [user.email, user.username] } }
     );
   } catch (error) {
     console.log(error);
@@ -465,6 +464,8 @@ app.get("/api/list-friends", async (req, res) => {
     return res.json({
       listOfFriends: user.friends,
     });
+
+    console.log("list of friends: " + user.friends)
   } catch (error) {
     console.log(error);
     res.json({ status: "error", error: "invlaid token" });
