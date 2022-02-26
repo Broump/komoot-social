@@ -29,6 +29,8 @@ function Statistics({ isAuth: isAuth, component: Component, ...rest }) {
   const [toursInMonthPerYearFriend, setToursInMonthPerYearFriend] = useState([]);
   const [selectedYear, setSelectedYear] = useState("");
 
+  console.log(selectedFriend)
+
   
 
   const getListOfFriends = async () => {
@@ -395,7 +397,7 @@ function Statistics({ isAuth: isAuth, component: Component, ...rest }) {
             >
               <option value="none">--Select Friend To Compare--</option>
               {listOfFriends.map((friend) => (
-                <option value={friend}>{friend}</option>
+                <option value={friend.email}>{friend.username}</option>
               ))}
             </Form.Control>
             <Button
@@ -583,7 +585,7 @@ function Statistics({ isAuth: isAuth, component: Component, ...rest }) {
             >
               <option value="none">--Select Friend To Compare--</option>
               {listOfFriends.map((friend) => (
-                <option value={friend}>{friend}</option>
+                <option value={friend.email}>{friend.username}</option>
               ))}
             </Form.Control>
             <Button
@@ -792,7 +794,7 @@ function Statistics({ isAuth: isAuth, component: Component, ...rest }) {
             >
               <option value="none">--Select Friend To Compare--</option>
               {listOfFriends.map((friend) => (
-                <option value={friend}>{friend}</option>
+                <option value={friend.email}>{friend.username}</option>
               ))}
             </Form.Control>
             <Button

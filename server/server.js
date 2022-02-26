@@ -159,6 +159,20 @@ app.get("/api/get-feed", async (req, res) => {
   }
 });
 
+app.get("/api/search", async (req, res) => {
+  const search = req.headers["search"];
+  try {
+    const childPython = spawn("python3", ["getTourData.py", "search", search]);
+
+    childPython.stdout.on("data", (data) => {
+      res.json(data.toString("utf8"));
+    });
+  } catch (error) {
+    console.log(error);
+    res.json({ status: "error", error: "invlaid search" });
+  }
+});
+
 app.get("/api/howOftenSport", async (req, res) => {
   const token = req.headers["x-access-token"];
 

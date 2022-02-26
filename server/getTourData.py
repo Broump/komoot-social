@@ -17,13 +17,14 @@ class KomootSocial:
         self.client_password = client_password
         # establish connection to MySQL Database
         self.mydb = mysql.connector.connect(
-            host="localhost",
-            user="root",
-            password="",
-            database="komoot_social"
+            host="eu-cdbr-west-02.cleardb.net",
+            user="baa5c1d8ab1123",
+            password="cb4d8584",
+            database="heroku_2df8696479c96b4"
         )
 
     # define getTourData function for fetching TourData from Komoot and pasting it into the Databae
+
     def getTourData(self):
         # try is used for the KeyError when to many requests are made
         try:
@@ -77,7 +78,8 @@ class KomootSocial:
             for tours in ListOfTours:
 
                 TourData = data["_embedded"]["tours"][tourcount]
-                TourDate = TourData["date"]
+                TourDateLong = TourData["date"]
+                TourDate = TourDateLong[0:9]
                 TourDistance = TourData["distance"]
                 TourDistance = round_up(TourDistance/1000, 1)
                 TourDuration = TourData["duration"]
@@ -156,7 +158,7 @@ class KomootSocial:
         collection = db["user-data"]
 
         mycursor = self.mydb.cursor()
-        sql = "SHOW TABLES FROM komoot_social"
+        sql = "SHOW TABLES FROM heroku_2df8696479c96b4"
         mycursor.execute(sql)
         tables = mycursor.fetchall()
 
@@ -166,6 +168,53 @@ class KomootSocial:
         for table in tables:
             mycursor = self.mydb.cursor()
             sql = f"SELECT tour_name, tour_sport, tour_distance, tour_duration, tour_date, tour_elevation_up, tour_elevation_down, tour_id, is_private, tour_text, tour_map_image, tour_start_point, tour_type, tour_creator_id  FROM {table[tableNumber]} WHERE is_private = 0"
+            mycursor.execute(sql)
+            rows = mycursor.fetchall()
+            for row in rows:
+                d = collections.OrderedDict()
+                d['tour_name'] = row[0]
+                d['tour_sport'] = row[1]
+                d['tour_distance'] = row[2]
+                d['tour_duration'] = row[3]
+                d['tour_date'] = row[4]
+                d['tour_elevation_up'] = row[5]
+                d['tour_elevation_down'] = row[6]
+                d['tour_id'] = row[7]
+                d['is_private'] = row[8]
+                d['tour_text'] = row[9]
+                d['tour_map_image'] = row[10]
+                d['tour_start_point'] = row[11]
+                d['tour_type'] = row[12]
+                d['tour_creator_id'] = row[13]
+                tour_creator_id = row[13]
+                for x in collection.find({"komootID": tour_creator_id}, {"_id": 0, "username": 1}):
+                    d['tour_creator_username'] = x["username"]
+                d['tour_user_id'] = table[tableNumber].replace("_", "")
+                tour_user_id = table[tableNumber].replace("_", "")
+                for x in collection.find({"komootID": tour_user_id}, {"_id": 0, "username": 1}):
+                    d['tour_user_username'] = x["username"]
+                objects_list.append(d)
+            j = json.dumps(objects_list, indent=4, sort_keys=True, default=str)
+        tableNumber += 1
+        return j
+
+    def search(self, search):
+        cluster = MongoClient("mongodb+srv://Broump:YOXVKJ3kjFZ0Qut1@cluster0.slhya.mongodb.net/myFirstDatabase?retryWrites=true&w=majority",
+                              tls=True, tlsAllowInvalidCertificates=True)
+        db = cluster["myFirstDatabase"]
+        collection = db["user-data"]
+
+        mycursor = self.mydb.cursor()
+        sql = "SHOW TABLES FROM heroku_2df8696479c96b4"
+        mycursor.execute(sql)
+        tables = mycursor.fetchall()
+
+        objects_list = []
+        tableNumber = 0
+
+        for table in tables:
+            mycursor = self.mydb.cursor()
+            sql = f"SELECT tour_name, tour_sport, tour_distance, tour_duration, tour_date, tour_elevation_up, tour_elevation_down, tour_id, is_private, tour_text, tour_map_image, tour_start_point, tour_type, tour_creator_id  FROM {table[tableNumber]} WHERE is_private = 0 AND tour_start_point = {search}"
             mycursor.execute(sql)
             rows = mycursor.fetchall()
             for row in rows:
@@ -423,11 +472,11 @@ class KomootSocial:
         return(j)
 
 
-
+"""
 ks = KomootSocial(
     673338137185, "DanielMuenstermann18@gmail.com", "DPrQh5bqv1TPutMU5uCP")
 ks.getTourData()
-returnData = ks.getHowManyToursInMonthPerYear(2021)
+returnData = ks.getTotalSportValues()
 print(returnData)
 
 
@@ -444,6 +493,11 @@ if (functionType == "toursInMonthPerYear"):
     ks = KomootSocial(int(sys.argv[2]), sys.argv[3], sys.argv[4])
     ks.getTourData()
     returnData = ks.getHowManyToursInMonthPerYear(sys.argv[5])
+    print(returnData)
+
+if (functionType == "search"):
+    ks = KomootSocial()
+    returnData = ks.search(sys.argv[2])
     print(returnData)
 
 if (functionType == "howOftenSport"):
@@ -476,4 +530,3 @@ if (functionType == "getFeed"):
 
 
 sys.stdout.flush()
-"""
