@@ -38,7 +38,7 @@ function Navigation() {
 
   const hanldeSearch = async () => {
     try {
-      const tours = await axios.get("/api/search",{
+      const tours = await axios.get("https://kommot-social.herokuapp.com/api/search",{
         headers: {
           search: search
         },

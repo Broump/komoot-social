@@ -12,7 +12,7 @@ function Footer() {
 
   useEffect(() => {
     axios
-      .get("/api/user-data", {
+      .get("https://kommot-social.herokuapp.com/api/user-data", {
         headers: {
           "x-access-token": localStorage.getItem("token"),
         },

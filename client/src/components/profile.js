@@ -19,7 +19,7 @@ function Profile({ isAuth: isAuth, component: Component, ...rest }) {
 
   useEffect(() => {
     axios
-      .get("/api/user-data", {
+      .get("https://kommot-social.herokuapp.com/api/user-data", {
         headers: {
           "x-access-token": localStorage.getItem("token"),
         },

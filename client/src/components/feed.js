@@ -14,7 +14,7 @@ function Feed() {
 
   const getFeed = async () => {
     try {
-      const tours = await axios.get("/api/get-feed");
+      const tours = await axios.get("https://kommot-social.herokuapp.com/api/get-feed");
       if (tours) {
         setListOfTours(JSON.parse(tours.data));
       }

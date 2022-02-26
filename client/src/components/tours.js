@@ -56,7 +56,7 @@ function Tours({ isAuth: isAuth, component: Component, ...rest }) {
 
   const getAllTours = async () => {
     try {
-      const tours = await axios.get("/api/all-tours", {
+      const tours = await axios.get("https://kommot-social.herokuapp.com/api/all-tours", {
         headers: {
           "x-access-token": localStorage.getItem("token"),
         },
@@ -70,7 +70,7 @@ function Tours({ isAuth: isAuth, component: Component, ...rest }) {
   };
 
   const UpdateTour = (tour_id) => {
-    axios.get("/api/update-tour", {
+    axios.get("https://kommot-social.herokuapp.com/api/update-tour", {
       headers: {
         "x-access-token": localStorage.getItem("token"),
         is_private: changedTourValues.is_private,

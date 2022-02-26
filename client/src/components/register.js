@@ -28,7 +28,7 @@ function Register() {
 
   async function RegisterUser(e) {
     e.preventDefault();
-    await axios.post("/api/register", {
+    await axios.post("https://kommot-social.herokuapp.com/api/register", {
       username: inputField.username,
       email: inputField.email,
       password: inputField.password,

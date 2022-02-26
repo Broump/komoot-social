@@ -26,7 +26,7 @@ function Friends({ isAuth: isAuth, component: Component, ...rest }) {
   const deleteFriend = async (friendToDelete) => {
     try {
       const deleteUser = await axios
-        .get("/api/delete-friend", {
+        .get("https://kommot-social.herokuapp.com/api/delete-friend", {
           headers: {
             "x-access-token": localStorage.getItem("token"),
             usertodelete: friendToDelete,
@@ -42,7 +42,7 @@ function Friends({ isAuth: isAuth, component: Component, ...rest }) {
 
   const handleSearch = async () => {
     try {
-      const user = await axios.get("/api/search-user", {
+      const user = await axios.get("https://kommot-social.herokuapp.com/api/search-user", {
         headers: {
           user: userToFind,
         },
@@ -64,7 +64,7 @@ function Friends({ isAuth: isAuth, component: Component, ...rest }) {
   };
 
   const handleAddFriend = (friendEmail) => {
-    axios.get("/api/add-friend", {
+    axios.get("https://kommot-social.herokuapp.com/api/add-friend", {
       headers: {
         "x-access-token": localStorage.getItem("token"),
         email: friendEmail,
@@ -75,7 +75,7 @@ function Friends({ isAuth: isAuth, component: Component, ...rest }) {
 
   const getListOfFriends = async () => {
     try {
-      const friends = await axios.get("/api/list-friends", {
+      const friends = await axios.get("https://kommot-social.herokuapp.com/api/list-friends", {
         headers: {
           "x-access-token": localStorage.getItem("token"),
         },

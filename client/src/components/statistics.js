@@ -35,7 +35,7 @@ function Statistics({ isAuth: isAuth, component: Component, ...rest }) {
 
   const getListOfFriends = async () => {
     try {
-      const friends = await axios.get("/api/list-friends", {
+      const friends = await axios.get("https://kommot-social.herokuapp.com/api/list-friends", {
         headers: {
           "x-access-token": localStorage.getItem("token"),
         },
@@ -50,7 +50,7 @@ function Statistics({ isAuth: isAuth, component: Component, ...rest }) {
 
   const getHowOftenSports = async () => {
     try {
-      const count = await axios.get("/api/howOftenSport", {
+      const count = await axios.get("https://kommot-social.herokuapp.com/api/howOftenSport", {
         headers: {
           "x-access-token": localStorage.getItem("token"),
         },
@@ -66,7 +66,7 @@ function Statistics({ isAuth: isAuth, component: Component, ...rest }) {
   const getHowOftenSportsFriend = async () => {
     try {
       
-      const totalFriend = await axios.get("/api/HowOftenSportsFriend", {
+      const totalFriend = await axios.get("https://kommot-social.herokuapp.com/api/HowOftenSportsFriend", {
         headers: {
           friendemail: selectedFriend,
         },
@@ -81,7 +81,7 @@ function Statistics({ isAuth: isAuth, component: Component, ...rest }) {
 
   const getTotalSportValues = async () => {
     try {
-      const total = await axios.get("/api/totalSportValues", {
+      const total = await axios.get("https://kommot-social.herokuapp.com/api/totalSportValues", {
         headers: {
           "x-access-token": localStorage.getItem("token"),
         },
@@ -97,7 +97,7 @@ function Statistics({ isAuth: isAuth, component: Component, ...rest }) {
   const getTotalSportValuesFriend = async () => {
     try {
       
-      const totalFriend = await axios.get("/api/totalSportValuesFriend", {
+      const totalFriend = await axios.get("https://kommot-social.herokuapp.com/api/totalSportValuesFriend", {
         headers: {
           friendemail: selectedFriend,
         },
@@ -112,7 +112,7 @@ function Statistics({ isAuth: isAuth, component: Component, ...rest }) {
 
   const gettoursInMonthPerYear = async (year) => {
     try {
-      const count = await axios.get("/api/toursInMonthPerYear", {
+      const count = await axios.get("https://kommot-social.herokuapp.com/api/toursInMonthPerYear", {
         headers: {
           "x-access-token": localStorage.getItem("token"),
           year: year,
@@ -129,7 +129,7 @@ function Statistics({ isAuth: isAuth, component: Component, ...rest }) {
   const gettoursInMonthPerYearFriend = async () => {
     try {
       
-      const totalFriend = await axios.get("/api/toursInMonthPerYearFriend", {
+      const totalFriend = await axios.get("https://kommot-social.herokuapp.com/api/toursInMonthPerYearFriend", {
         headers: {
           friendemail: selectedFriend,
           year: selectedYear,

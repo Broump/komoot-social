@@ -25,7 +25,7 @@ const Login = () => {
   async function LoginUser(e) {
     e.preventDefault();
     await axios
-      .post("/api/login", {
+      .post("https://kommot-social.herokuapp.com/api/login", {
         email: inputField.email,
         password: inputField.password,
       })
