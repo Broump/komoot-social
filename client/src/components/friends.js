@@ -21,7 +21,6 @@ function Friends({ isAuth: isAuth, component: Component, ...rest }) {
   const [userToFind, setUserToFind] = useState("");
 
   console.log("Search: " + foundUsers)
-  console.log("Found User: "+ foundUsers)
   console.log("list of friends: "+ listOfFriends)
 
   const deleteFriend = async (friendToDelete) => {
@@ -34,7 +33,7 @@ function Friends({ isAuth: isAuth, component: Component, ...rest }) {
           },
         })
         .then((response) => {
-          setListOfFriends(listOfFriends.slice(friendToDelete));
+          
         });
     } catch (err) {
       console.error(err);
@@ -71,7 +70,6 @@ function Friends({ isAuth: isAuth, component: Component, ...rest }) {
         email: friendEmail,
       },
     });
-    setListOfFriends([...listOfFriends, friendEmail]);
     setFoundUsers([]);
   };
 
@@ -84,6 +82,7 @@ function Friends({ isAuth: isAuth, component: Component, ...rest }) {
       });
       if (friends) {
         setListOfFriends(friends.data.listOfFriends);
+        console.log(friends.data.listOfFriends)
       }
     } catch (err) {
       console.error(err);
@@ -151,11 +150,12 @@ function Friends({ isAuth: isAuth, component: Component, ...rest }) {
                 <ListGroup variant="flush">
                   {listOfFriends.map((friend) => (
                     <div>
-                      <ListGroup.Item>{friend}</ListGroup.Item>
+                      <ListGroup.Item>{friend.username}</ListGroup.Item>
+                      <ListGroup.Item>{friend.email}</ListGroup.Item>
                       <Button
                         className="m-2"
                         variant="danger"
-                        onClick={() => deleteFriend(friend)}
+                        onClick={() => deleteFriend(friend.email)}
                       >
                         Delete
                       </Button>

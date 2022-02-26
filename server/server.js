@@ -415,22 +415,26 @@ app.get("/api/search-user", async (req, res) => {
       email: user.email,
     });
 
-    console.log(user.name + user.email)
+    
   } catch (error) {
-    console.log(error);
     res.json({ status: "error", error: "user not found" });
   }
 });
 
 app.get("/api/delete-friend", async (req, res) => {
   const friendToDelete = req.headers["usertodelete"];
+  const token = req.headers["x-access-token"];
 
   try {
-    const user = await User.findOne({ email: usertodelete });
+    const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+    const email = decoded.email;
+    const user = await User.findOne({ email: email });
+    const friend = await User.findOne({ email: friendToDelete });
+
     const deleteuser = await User.findOneAndUpdate(
       { email: user.email },
-      { $pull: { friends: [user.email, user.username] } }
-    );
+      { $pull: { friends: {email: friend.email, username: friend.username} } }
+    )
   } catch (error) {
     console.log(error);
     res.json({ status: "error", error: "invlaid token" });
@@ -439,14 +443,19 @@ app.get("/api/delete-friend", async (req, res) => {
 
 app.get("/api/add-friend", async (req, res) => {
   const friendEmail = req.headers["email"];
+  const token = req.headers["x-access-token"];
 
   try {
-    const user = await User.findOne({ email: friendEmail });
-
+    const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+    const email = decoded.email;
+    const user = await User.findOne({ email: email });
+    const friend = await User.findOne({ email: friendEmail });
+    
     const adduser = await User.findOneAndUpdate(
       { email: user.email },
-      { $push: { friends: [user.email, user.username] } }
-    );
+      { $push: { friends: {email: friend.email, username: friend.username} } }
+    )
+    
   } catch (error) {
     console.log(error);
     res.json({ status: "error", error: "invlaid token" });
@@ -465,7 +474,7 @@ app.get("/api/list-friends", async (req, res) => {
       listOfFriends: user.friends,
     });
 
-    console.log("list of friends: " + user.friends)
+    
   } catch (error) {
     console.log(error);
     res.json({ status: "error", error: "invlaid token" });

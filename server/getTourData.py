@@ -113,7 +113,7 @@ class KomootSocial:
         except KeyError:
             pass
 
-    def updateTour(self, is_private, tour_id="null", tour_text="null"):
+    def updateTour(self, is_private, tour_id, tour_text):
         if (tour_id != "null"):
             mycursor = self.mydb.cursor()
             sql = f"UPDATE _{self.client_id} SET is_private = {is_private} WHERE tour_id = {tour_id}"
@@ -423,7 +423,7 @@ class KomootSocial:
         return(j)
 
 
-"""
+
 ks = KomootSocial(
     673338137185, "DanielMuenstermann18@gmail.com", "DPrQh5bqv1TPutMU5uCP")
 ks.getTourData()
@@ -476,3 +476,4 @@ if (functionType == "getFeed"):
 
 
 sys.stdout.flush()
+"""
