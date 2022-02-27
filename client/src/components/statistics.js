@@ -29,7 +29,6 @@ function Statistics({ isAuth: isAuth, component: Component, ...rest }) {
   const [toursInMonthPerYearFriend, setToursInMonthPerYearFriend] = useState([]);
   const [selectedYear, setSelectedYear] = useState("");
 
-  console.log(selectedFriend)
 
   
 

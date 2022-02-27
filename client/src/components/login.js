@@ -30,7 +30,7 @@ const Login = () => {
         password: inputField.password,
       })
       .then((response) => {
-        console.log(response);
+        
         if (response.data.user) {
           localStorage.setItem("token", response.data.user);
           window.location.href = "/";

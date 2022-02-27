@@ -18,7 +18,6 @@ function Tours({ isAuth: isAuth, component: Component, ...rest }) {
     tour_text: "null",
   });
 
-  console.log(changedTourValues)
 
   const [editingTour, setEditingTour] = useState({
     editing: false,

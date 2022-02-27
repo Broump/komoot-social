@@ -24,10 +24,6 @@ function Navigation() {
   const [search, setSearch] = useState([])
   const [listOfTours, setListOfTours] = useState([])
 
-  console.log(listOfTours)
-
-
-
   const handleLogout = () => {
     localStorage.removeItem("token");
   };

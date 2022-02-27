@@ -8,6 +8,11 @@ import collections
 import pymongo
 from pymongo import MongoClient
 
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
 
 class KomootSocial:
     # instantiate KommotSocial Class with given client_id, client_email and client_password
@@ -17,10 +22,10 @@ class KomootSocial:
         self.client_password = client_password
         # establish connection to MySQL Database
         self.mydb = mysql.connector.connect(
-            host="eu-cdbr-west-02.cleardb.net",
-            user="baa5c1d8ab1123",
-            password="cb4d8584",
-            database="heroku_2df8696479c96b4"
+            host=os.environ.get("host"),
+            user=os.environ.get("user"),
+            password=os.environ.get("password"),
+            database=os.environ.get("database")
         )
 
     # define getTourData function for fetching TourData from Komoot and pasting it into the Databae
@@ -115,6 +120,7 @@ class KomootSocial:
         except KeyError:
             pass
 
+    # function to update the private status and text
     def updateTour(self, is_private, tour_id, tour_text):
         if (tour_id != "null"):
             mycursor = self.mydb.cursor()
@@ -127,6 +133,7 @@ class KomootSocial:
             mycursor.execute(sql)
             self.mydb.commit()
 
+    # function to display everytour
     def getAllTours(self):
         mycursor = self.mydb.cursor()
         sql = f"SELECT tour_name, tour_sport, tour_distance, tour_duration, tour_date, tour_elevation_up, tour_elevation_down, tour_id, is_private, tour_text, tour_start_point  FROM _{self.client_id} WHERE tour_type = 'tour_recorded'"
@@ -151,6 +158,7 @@ class KomootSocial:
         j = json.dumps(objects_list, indent=4, sort_keys=True, default=str)
         return j
 
+    # function to get the Feed
     def getFeed(self):
         cluster = MongoClient("mongodb+srv://Broump:YOXVKJ3kjFZ0Qut1@cluster0.slhya.mongodb.net/myFirstDatabase?retryWrites=true&w=majority",
                               tls=True, tlsAllowInvalidCertificates=True)
@@ -198,6 +206,7 @@ class KomootSocial:
         tableNumber += 1
         return j
 
+    # function for the search
     def search(self, search):
         cluster = MongoClient("mongodb+srv://Broump:YOXVKJ3kjFZ0Qut1@cluster0.slhya.mongodb.net/myFirstDatabase?retryWrites=true&w=majority",
                               tls=True, tlsAllowInvalidCertificates=True)
@@ -245,6 +254,7 @@ class KomootSocial:
         tableNumber += 1
         return j
 
+    # function that calculates how often you did every sporttype
     def getHowOftenSport(self):
 
         values = []
@@ -346,6 +356,7 @@ class KomootSocial:
         j = json.dumps(objects_list, indent=4, sort_keys=True, default=str)
         return(j)
 
+    # function that calculates that total values of given attribues
     def getTotalSportValues(self):
 
         values = []
@@ -398,6 +409,7 @@ class KomootSocial:
         j = json.dumps(objects_list, indent=4, sort_keys=True, default=str)
         return(j)
 
+    # fcucntion that calculates the total sport values per year
     def getTotalSportValuesPerYear(self, tour_year):
         values = []
         d = collections.OrderedDict()
@@ -449,6 +461,7 @@ class KomootSocial:
         j = json.dumps(objects_list, indent=4, sort_keys=True, default=str)
         return(j)
 
+    # function that calculates the numbers of every month by given year
     def getHowManyToursInMonthPerYear(self, tour_year):
         months = []
         times = []
@@ -472,15 +485,7 @@ class KomootSocial:
         return(j)
 
 
-"""
-ks = KomootSocial(
-    673338137185, "DanielMuenstermann18@gmail.com", "DPrQh5bqv1TPutMU5uCP")
-ks.getTourData()
-returnData = ks.getTotalSportValues()
-print(returnData)
-
-
-"""
+# the follwing code handles the given arguments from the server
 functionType = sys.argv[1]
 
 if (functionType == "allTours"):

@@ -20,9 +20,6 @@ function Friends({ isAuth: isAuth, component: Component, ...rest }) {
   const [listOfFriends, setListOfFriends] = useState([]);
   const [userToFind, setUserToFind] = useState("");
 
-  console.log("Search: " + foundUsers)
-  console.log("list of friends: "+ listOfFriends)
-
   const deleteFriend = async (friendToDelete) => {
     try {
       const deleteUser = await axios
@@ -82,7 +79,6 @@ function Friends({ isAuth: isAuth, component: Component, ...rest }) {
       });
       if (friends) {
         setListOfFriends(friends.data.listOfFriends);
-        console.log(friends.data.listOfFriends)
       }
     } catch (err) {
       console.error(err);

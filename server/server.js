@@ -13,7 +13,7 @@ const { spawn } = require("child_process");
 const User = require("./model/user");
 
 mongoose.connect(
-  "mongodb+srv://Broump:YOXVKJ3kjFZ0Qut1@cluster0.slhya.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
+  process.env.CONNECTION
 );
 
 const app = express();
@@ -21,6 +21,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+//funtion for the login process
 app.post("/api/login", async (req, res) => {
   if (!req.body.email) {
     return res.json({ status: "error", error: "Invalid username/password" });
@@ -54,6 +55,7 @@ app.post("/api/login", async (req, res) => {
   }
 });
 
+//function for the registration process
 app.post("/api/register", async (req, res) => {
   if (!req.body.username || typeof req.body.username !== "string") {
     return res.json({ status: "error", error: "Invalid Username" });
@@ -92,6 +94,7 @@ app.post("/api/register", async (req, res) => {
   }
 });
 
+//process for getting the user-data
 app.get("/api/user-data", async (req, res) => {
   const token = req.headers["x-access-token"];
 
@@ -111,6 +114,7 @@ app.get("/api/user-data", async (req, res) => {
   }
 });
 
+//process for getting every tour
 app.get("/api/all-tours", async (req, res) => {
   const token = req.headers["x-access-token"];
 
@@ -146,6 +150,7 @@ app.get("/api/all-tours", async (req, res) => {
   }
 });
 
+//process for getting the feed
 app.get("/api/get-feed", async (req, res) => {
   try {
     const childPython = spawn("python3", ["getTourData.py", "getFeed"]);
@@ -159,6 +164,7 @@ app.get("/api/get-feed", async (req, res) => {
   }
 });
 
+//process for the search
 app.get("/api/search", async (req, res) => {
   const search = req.headers["search"];
   try {
@@ -173,6 +179,7 @@ app.get("/api/search", async (req, res) => {
   }
 });
 
+//process for statistic
 app.get("/api/howOftenSport", async (req, res) => {
   const token = req.headers["x-access-token"];
 
@@ -208,6 +215,7 @@ app.get("/api/howOftenSport", async (req, res) => {
   }
 });
 
+//process for statistic
 app.get("/api/HowOftenSportsFriend", async (req, res) => {
   const friendEmail = req.headers["friendemail"];
 
@@ -241,6 +249,7 @@ app.get("/api/HowOftenSportsFriend", async (req, res) => {
   }
 });
 
+//process for statistic
 app.get("/api/totalSportValues", async (req, res) => {
   const token = req.headers["x-access-token"];
 
@@ -276,6 +285,7 @@ app.get("/api/totalSportValues", async (req, res) => {
   }
 });
 
+//process for statistic
 app.get("/api/totalSportValuesFriend", async (req, res) => {
   const friendEmail = req.headers["friendemail"];
 
@@ -309,6 +319,7 @@ app.get("/api/totalSportValuesFriend", async (req, res) => {
   }
 });
 
+//process for statistic
 app.get("/api/totalSportValuesPerYear", async (req, res) => {
   const token = req.headers["x-access-token"];
   const year = req.headers["year"];
@@ -346,6 +357,7 @@ app.get("/api/totalSportValuesPerYear", async (req, res) => {
   }
 });
 
+//process for statistic
 app.get("/api/toursInMonthPerYear", async (req, res) => {
   const token = req.headers["x-access-token"];
   const year = req.headers["year"];
@@ -383,6 +395,7 @@ app.get("/api/toursInMonthPerYear", async (req, res) => {
   }
 });
 
+//process for statistic
 app.get("/api/toursInMonthPerYearFriend", async (req, res) => {
   const friendEmail = req.headers["friendemail"];
   const year = req.headers["year"];
@@ -418,6 +431,7 @@ app.get("/api/toursInMonthPerYearFriend", async (req, res) => {
   }
 });
 
+//process for friends
 app.get("/api/search-user", async (req, res) => {
   const userToFind = req.headers["user"];
 
@@ -435,6 +449,7 @@ app.get("/api/search-user", async (req, res) => {
   }
 });
 
+//process for friends
 app.get("/api/delete-friend", async (req, res) => {
   const friendToDelete = req.headers["usertodelete"];
   const token = req.headers["x-access-token"];
@@ -455,6 +470,7 @@ app.get("/api/delete-friend", async (req, res) => {
   }
 });
 
+//process for friends
 app.get("/api/add-friend", async (req, res) => {
   const friendEmail = req.headers["email"];
   const token = req.headers["x-access-token"];
@@ -476,6 +492,7 @@ app.get("/api/add-friend", async (req, res) => {
   }
 });
 
+//process for friends
 app.get("/api/list-friends", async (req, res) => {
   const token = req.headers["x-access-token"];
 
@@ -495,6 +512,7 @@ app.get("/api/list-friends", async (req, res) => {
   }
 });
 
+//process for updating tour
 app.get("/api/update-tour", async (req, res) => {
   const token = req.headers["x-access-token"];
   const is_private = req.headers["is_private"];
