@@ -25,7 +25,7 @@ function Feed() {
 
   useEffect(() => {
     getFeed();
-  }, [getFeed()]);
+  }, []);
 
   if (listOfTours.length === 0) {
     return (
