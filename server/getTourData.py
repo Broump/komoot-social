@@ -160,7 +160,7 @@ class KomootSocial:
 
     # function to get the Feed
     def getFeed(self):
-        cluster = MongoClient("mongodb+srv://Broump:YOXVKJ3kjFZ0Qut1@cluster0.slhya.mongodb.net/myFirstDatabase?retryWrites=true&w=majority",
+        cluster = MongoClient(os.environ.get("MongoDB"),
                               tls=True, tlsAllowInvalidCertificates=True)
         db = cluster["myFirstDatabase"]
         collection = db["user-data"]
@@ -208,7 +208,7 @@ class KomootSocial:
 
     # function for the search
     def search(self, search):
-        cluster = MongoClient("mongodb+srv://Broump:YOXVKJ3kjFZ0Qut1@cluster0.slhya.mongodb.net/myFirstDatabase?retryWrites=true&w=majority",
+        cluster = MongoClient(os.environ.get("MongoDB"),
                               tls=True, tlsAllowInvalidCertificates=True)
         db = cluster["myFirstDatabase"]
         collection = db["user-data"]
